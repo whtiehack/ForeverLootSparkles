@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.1-zh1
+
+smallwhite 的 fork，2026-11-06，基于 1.3.1。
+
+- 简体中文：设置面板、聊天提示、插件列表的标题和说明。
+- 退出游戏时把任务物品闪光还原成装插件前的值，下次登录再打开。这样删掉插件后闪光不会一直留着。
+
 ## 1.3.1
 
 - The addon no longer touches your outline mode, so the Self Highlight outline around your character works again. It only keeps the loot sparkle switched on. Up to 1.3.0 it switched the outline mode off; pick it again under Options > Graphics if you want it back.

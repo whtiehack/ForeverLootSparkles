@@ -18,6 +18,7 @@ read_globals = {
   "CreateSettingsListSectionHeaderInitializer",
   "Enum",
   "GetFileIDFromPath",
+  "GetLocale",
   "GetNumQuestLogEntries",
   "GetQuestLogTitle",
   "GetTime",

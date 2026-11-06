@@ -4,6 +4,7 @@
 -- off, which took away the Self Highlight outline (CurseForge issue #1).
 
 local ADDON_NAME, ns = ...;
+local L = ns.L;
 
 local WANTED = {
 	outlineModeShowLootEffectWhenDisabled = "1",
@@ -82,19 +83,28 @@ local function OnEnabledChanged(_, value)
 		-- not enough). Told in chat: a shown predicate on a settings initializer
 		-- runs addon code inside Blizzard's options search and taints it.
 		if sparklesShown then
-			print("|cffff8000Forever Loot Sparkles:|r restart the game to remove the sparkles. /reload is not enough.");
+			print(L["|cffff8000Forever Loot Sparkles:|r restart the game to remove the sparkles. /reload is not enough."]);
 		end
 	end
 end
 
+-- The game keeps cvars after an addon is removed, so a player who deletes the
+-- addon would keep the sparkles (quest givers included) with no idea why. The
+-- player's own value is put back at logout, and login switches it on again.
+local function RestoreForLogout()
+	if IsEnabled() and db and db.lootEffectBefore and not InCombatLockdown() then
+		SetAll({ outlineModeShowLootEffectWhenDisabled = db.lootEffectBefore });
+	end
+end
+
 local function RegisterOptions()
-	local category = Settings.RegisterVerticalLayoutCategory("Forever Loot Sparkles");
+	local category = Settings.RegisterVerticalLayoutCategory(L["Forever Loot Sparkles"]);
 
 	local setting = Settings.RegisterAddOnSetting(category, "FOREVER_LOOT_SPARKLES_ENABLED", "enabled",
-		db, Settings.VarType.Boolean, "Show quest item sparkles", Settings.Default.True);
+		db, Settings.VarType.Boolean, L["Show quest item sparkles"], Settings.Default.True);
 	setting:SetValueChangedCallback(OnEnabledChanged);
 	Settings.CreateCheckbox(category, setting,
-		"Keeps the game's loot sparkle on, even after a graphics preset turns it off. Your outline mode is left as you set it. Switching this off takes effect after restarting the game.");
+		L["Keeps the game's loot sparkle on, even after a graphics preset turns it off. Your outline mode is left as you set it. Switching this off takes effect after restarting the game."]);
 
 	ns.AddSoftTargetOptions(category, db);
 
@@ -104,6 +114,7 @@ end
 local frame = CreateFrame("Frame");
 frame:RegisterEvent("ADDON_LOADED");
 frame:RegisterEvent("PLAYER_LOGIN");
+frame:RegisterEvent("PLAYER_LOGOUT");
 frame:RegisterEvent("PLAYER_REGEN_ENABLED");
 pcall(frame.RegisterEvent, frame, "CVAR_UPDATE");
 frame:SetScript("OnEvent", function(self, event, arg1)
@@ -116,8 +127,13 @@ frame:SetScript("OnEvent", function(self, event, arg1)
 			sparklesShown = IsEnabled();
 		end
 	elseif event == "PLAYER_LOGIN" then
+		if db.lootEffectBefore == nil then
+			db.lootEffectBefore = C_CVar.GetCVar("outlineModeShowLootEffectWhenDisabled") or "0";
+		end
 		Apply();
 		ScheduleApply(5);
+	elseif event == "PLAYER_LOGOUT" then
+		RestoreForLogout();
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		if pendingAfterCombat then
 			pendingAfterCombat = false;

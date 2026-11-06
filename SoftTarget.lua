@@ -7,6 +7,7 @@
 -- Adapted from the Lueur addon by the same author.
 
 local ADDON_NAME, ns = ...;
+local L = ns.L;
 
 local SOFT = "softinteract";
 local TEXTURE = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Textures\\flare";
@@ -726,7 +727,7 @@ function ns.AddSoftTargetOptions(category, savedVariables)
 		end
 	end
 
-	Settings.RegisterInitializer(category, CreateSettingsListSectionHeaderInitializer("Sparkles while approaching"));
+	Settings.RegisterInitializer(category, CreateSettingsListSectionHeaderInitializer(L["Sparkles while approaching"]));
 
 	local function OnChanged(_, value)
 		Refresh(value == true);
@@ -738,15 +739,15 @@ function ns.AddSoftTargetOptions(category, savedVariables)
 		setting:SetValueChangedCallback(OnChanged);
 		Settings.CreateCheckbox(category, setting, tooltip);
 	end
-	local how = " Uses Blizzard's soft targeting: the nearest object within about 15 yards sparkles, brighter once you can reach it. Needs the game's Enable Interact Key setting and its interact icons on objects; switching this on turns both on, and with them off nothing sparkles.";
-	AddCheckbox("sparkleOre", "FOREVER_LOOT_SPARKLES_ORE", "Ore veins",
-		"Sparkles on mining nodes as you approach them." .. how);
-	AddCheckbox("sparkleHerbs", "FOREVER_LOOT_SPARKLES_HERBS", "Herbs",
-		"Sparkles on herbs as you approach them." .. how);
-	AddCheckbox("sparkleQuest", "FOREVER_LOOT_SPARKLES_QUEST", "Quest objects",
-		"Extra sparkles on quest objects as you approach them. Off by default: the game's loot sparkle already marks most of them." .. how);
-	AddCheckbox("sparkleCorpseLoot", "FOREVER_LOOT_SPARKLES_CORPSE_LOOT", "Corpses with loot",
-		"Sparkles on a corpse that still holds loot for you, bosses included. Only after the fight: the game doesn't let addons switch the nameplate it hangs on during combat." .. how);
+	local how = L[" Uses Blizzard's soft targeting: the nearest object within about 15 yards sparkles, brighter once you can reach it. Needs the game's Enable Interact Key setting and its interact icons on objects; switching this on turns both on, and with them off nothing sparkles."];
+	AddCheckbox("sparkleOre", "FOREVER_LOOT_SPARKLES_ORE", L["Ore veins"],
+		L["Sparkles on mining nodes as you approach them."] .. how);
+	AddCheckbox("sparkleHerbs", "FOREVER_LOOT_SPARKLES_HERBS", L["Herbs"],
+		L["Sparkles on herbs as you approach them."] .. how);
+	AddCheckbox("sparkleQuest", "FOREVER_LOOT_SPARKLES_QUEST", L["Quest objects"],
+		L["Extra sparkles on quest objects as you approach them. Off by default: the game's loot sparkle already marks most of them."] .. how);
+	AddCheckbox("sparkleCorpseLoot", "FOREVER_LOOT_SPARKLES_CORPSE_LOOT", L["Corpses with loot"],
+		L["Sparkles on a corpse that still holds loot for you, bosses included. Only after the fight: the game doesn't let addons switch the nameplate it hangs on during combat."] .. how);
 
 	UpdatePoller();
 end

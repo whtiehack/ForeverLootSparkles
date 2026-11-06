@@ -1,5 +1,7 @@
 # Forever Loot Sparkles
 
+> 简体中文版，fork 自 [svengabr/ForeverLootSparkles](https://github.com/svengabr/ForeverLootSparkles)，给 [EasyForever](https://github.com/whtiehack) 用。改动见 CHANGELOG 里的 `-zh` 版本。打包：`./package-zh.sh v1.3.1-zh1`，压缩包在 `dist/`。
+
 <img src="https://raw.githubusercontent.com/svengabr/ForeverLootSparkles/main/media/logo.png" alt="ForeverLootSparkles logo" width="128">
 
 A small addon for **World of Warcraft: Forever** that makes lootable things sparkle, so you never walk past them.
