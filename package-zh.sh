@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 tmp=$(mktemp -d)
 dir=$tmp/ForeverLootSparkles
 mkdir -p "$dir"
-cp -R Locales.lua ForeverLootSparkles.lua Icon.tga Textures LICENSE README.md CHANGELOG.md "$dir/"
+cp -R Locales.lua ForeverLootSparkles.lua Icon.tga LICENSE README.md CHANGELOG.md "$dir/"
 sed -e '/^#@debug@$/,/^#@end-debug@$/d' -e '/^#@non-debug@$/d' -e '/^#@end-non-debug@$/d' \
 	-e "s/^# ## Version: @project-version@\$/## Version: $version/" ForeverLootSparkles.toc > "$dir/ForeverLootSparkles.toc"
 mkdir -p dist
