@@ -13,18 +13,16 @@ login (and 5 s later) and about 1 s after any watched cvar changes (`CVAR_UPDATE
 In combat it waits for `PLAYER_REGEN_ENABLED`. One option (checkbox under Esc > Options > AddOns, SavedVariable `ForeverLootSparklesDB.enabled`, default on); switching it off stops enforcing and writes the `DISABLED` value once (loot effect 0). Tested in the client: switching on shows the sparkle at once, switching off only takes effect after a full game restart (`/reload` is not enough), so switching it off prints a restart notice in chat (not a settings header with a shown predicate: Blizzard's options search runs those and gets tainted, CurseForge issue #4). The cvar part lives in
 `ForeverLootSparkles.lua`.
 
-`SoftTarget.lua` (adapted from the maintainer's Lueur addon) adds sparkles on ore veins, herbs, corpses that still
-hold loot for the player (`UnitIsDead` + `CanLootUnit(guid)` hasLoot/canLoot; `UnitIsCorpse` is false for dead mobs;
-the game's loot sparkle left boss corpses out, reported on CurseForge; a corpse's contents can't be read before the
-loot window opens, checked in the client) and optionally quest
-objects: it switches on interaction soft targeting (`SoftTargetInteract` 3, the game's "Enable Interact Key": set when the sparkles first start and when a sparkle option is ticked, never at login, so a player who switched it off keeps it off (CurseForge issue #2); range 60 (the client still stops at ~15), arc 2). The "Interact Key Icons" dropdown (Accessibility) drives `SoftTargetIconEnemy`, `SoftTargetIconInteract`, `SoftTargetIconGameObject` and `SoftTargetLowPriorityIcons`. Up to 1.3.0 the last three were forced to 1, which put icons on chairs and NPCs (issue #3). `SoftTargetIconInteract` and `SoftTargetLowPriorityIcons` are no longer touched and their saved values are restored once at login. `SoftTargetIconGameObject` = 1 is still needed: without it a world object gets no `softinteract` nameplate and nothing sparkles (checked in the client); it follows the same set-once rule as `SoftTargetInteract`. It turns the
-`softinteract` nameplate on only for wanted objects (`SoftTargetNameplateInteract`), classifies the object by its
-cursor icon (`SetUnitCursorTexture`) and hangs a cluster of glints (`Textures/flare.tga`, fallback
-`Interface\Cooldown\star4`) on that nameplate. States: far (dim), ready (bright), locked (grey). The nameplate is closed on `PLAYER_REGEN_DISABLED` (cvars are locked in combat; left open, lootable corpses kept a 0% health nameplate, reported on CurseForge), so nodes don't sparkle in combat. Options
-`sparkleOre`, `sparkleHerbs`, `sparkleCorpseLoot` (default on; off for an existing install that had every sparkle
-off, so it doesn't switch soft targeting back on), `sparkleQuest` (default off) in the same SavedVariable; the original cvar
-values sit in `ForeverLootSparklesDB.savedCVars` and are restored when all four are off. Its options are added by
-`ns.AddSoftTargetOptions` while the main file builds the panel. The addon list icon is `Icon.tga` (64×64, scaled down from `media/logo.png`, whose source is `media/logo.svg`).
+Up to 1.3.x a second file, `SoftTarget.lua` (from the maintainer's Lueur addon), made ore veins, herbs, corpses with
+loot and quest objects sparkle by switching on Blizzard's interaction soft targeting (`SoftTargetInteract` 3,
+`SoftTargetIconGameObject` 1, `SoftTargetNameplateInteract`) and hanging glints on the `softinteract` nameplate. It was
+removed in 2.0.0: it broke self-cast on friendly spells (CurseForge issue #10), left empty nameplates on dead mobs
+(#12) and showed interact icons (#7). Don't bring that approach back. What's left is a one-time cleanup in
+`ForeverLootSparkles.lua` (`RestoreSoftTarget`): the original values saved in `ForeverLootSparklesDB.savedCVars` are
+put back at login and again with the 5 s pass, then the table is dropped. `SoftTargetInteract`,
+`SoftTargetIconGameObject`, `SoftTargetIconInteract` and `SoftTargetLowPriorityIcons` only go back while they still hold
+the value the addon set, so a player who changed them keeps theirs. The old option keys (`sparkleOre`, `sparkleHerbs`,
+`sparkleQuest`, `sparkleCorpseLoot`) are cleared from the SavedVariable. The addon list icon is `Icon.tga` (64×64, scaled down from `media/logo.png`, whose source is `media/logo.svg`).
 
 The feature was extracted from ForeverQoL, which set the same cvars through secure macro buttons
 (`/console …`). This addon uses `C_CVar.SetCVar` instead.

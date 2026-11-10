@@ -1,8 +1,8 @@
 ## Interface: 16001
 ## Title: Forever Loot Sparkles
-## Title-zhCN: 拾取和采集闪光
-## Notes: Always shows the sparkle effect on lootable quest items. Turns the outline mode off and the loot sparkle on at login and whenever a graphics change resets it. Also makes ore veins and herbs sparkle as you approach them (Blizzard's soft targeting). Options under Options > AddOns.
-## Notes-zhCN: 任务物品、矿、草药和有战利品的尸体会闪光。设置在 Esc → 选项 → 插件 里。
+## Title-zhCN: 任务物品闪光
+## Notes: Always shows the sparkle effect on lootable quest items. Switches the loot sparkle back on at login and whenever a graphics change resets it. Options under Options > AddOns.
+## Notes-zhCN: 能拾取的任务物品一直闪光。设置在 Esc → 选项 → 插件 里。
 ## Author: Ashtar Senior
 #@debug@
 ## Version: dev
@@ -17,4 +17,3 @@
 
 Locales.lua
 ForeverLootSparkles.lua
-SoftTarget.lua

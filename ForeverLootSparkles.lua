@@ -56,6 +56,50 @@ local function Apply()
 	SetAll(WANTED);
 end
 
+-- Up to 1.3.x the addon also made herbs, ore, corpses and quest objects sparkle
+-- through Blizzard's soft targeting (SoftTarget.lua). That side broke self-cast
+-- (CurseForge issue #10), left empty nameplates on corpses (#12) and showed
+-- interact icons (#7), so it was removed. Its cvars are put back here: the
+-- original values were saved in db.savedCVars.
+local SOFT_TARGET_OPTIONS = { "sparkleOre", "sparkleHerbs", "sparkleQuest", "sparkleCorpseLoot" };
+
+-- Value the addon set. These are the player's own settings too, so they only go
+-- back while they still hold that value; a player who changed one keeps theirs.
+-- Every other saved cvar is put back as it was.
+local SOFT_TARGET_SET = {
+	SoftTargetInteract = "3",
+	SoftTargetIconGameObject = "1",
+	SoftTargetIconInteract = "1",
+	SoftTargetLowPriorityIcons = "1",
+};
+
+local cleanupPending = false;
+
+-- Runs at login and again with the delayed pass, in case account-synced
+-- settings arrive late; the saved values are dropped after the second run.
+local function RestoreSoftTarget(final)
+	if not (db and db.savedCVars) then
+		return;
+	end
+	if InCombatLockdown() then
+		cleanupPending = true;
+		return;
+	end
+	applying = true;
+	for cvar, value in pairs(db.savedCVars) do
+		local current = C_CVar.GetCVar(cvar);
+		local ours = SOFT_TARGET_SET[cvar];
+		if value ~= false and current ~= nil and current ~= tostring(value)
+			and (ours == nil or current == ours) then
+			pcall(C_CVar.SetCVar, cvar, tostring(value));
+		end
+	end
+	applying = false;
+	if final then
+		db.savedCVars = nil;
+	end
+end
+
 local applyAt;
 local timerFrame = CreateFrame("Frame");
 timerFrame:Hide();
@@ -63,6 +107,7 @@ timerFrame:SetScript("OnUpdate", function(self)
 	if GetTime() >= applyAt then
 		self:Hide();
 		Apply();
+		RestoreSoftTarget(true);
 	end
 end);
 
@@ -106,8 +151,6 @@ local function RegisterOptions()
 	Settings.CreateCheckbox(category, setting,
 		L["Keeps the game's loot sparkle on, even after a graphics preset turns it off. Your outline mode is left as you set it. Switching this off takes effect after restarting the game."]);
 
-	ns.AddSoftTargetOptions(category, db);
-
 	Settings.RegisterAddOnCategory(category);
 end
 
@@ -123,6 +166,9 @@ frame:SetScript("OnEvent", function(self, event, arg1)
 			self:UnregisterEvent("ADDON_LOADED");
 			ForeverLootSparklesDB = ForeverLootSparklesDB or {};
 			db = ForeverLootSparklesDB;
+			for _, key in ipairs(SOFT_TARGET_OPTIONS) do
+				db[key] = nil;
+			end
 			RegisterOptions();
 			sparklesShown = IsEnabled();
 		end
@@ -131,6 +177,7 @@ frame:SetScript("OnEvent", function(self, event, arg1)
 			db.lootEffectBefore = C_CVar.GetCVar("outlineModeShowLootEffectWhenDisabled") or "0";
 		end
 		Apply();
+		RestoreSoftTarget(false);
 		ScheduleApply(5);
 	elseif event == "PLAYER_LOGOUT" then
 		RestoreForLogout();
@@ -138,6 +185,10 @@ frame:SetScript("OnEvent", function(self, event, arg1)
 		if pendingAfterCombat then
 			pendingAfterCombat = false;
 			Apply();
+		end
+		if cleanupPending then
+			cleanupPending = false;
+			RestoreSoftTarget(true);
 		end
 	elseif not applying and type(arg1) == "string" and WATCHED[strlower(arg1)] then
 		ScheduleApply(1);

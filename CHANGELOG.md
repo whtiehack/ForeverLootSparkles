@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.0-zh1
+
+smallwhite 的 fork，2026-11-10，基于 2.0.0。
+
+- 简体中文：设置面板、聊天提示、插件列表的标题和说明。中文名改成“任务物品闪光”，因为矿、草药、尸体闪光上游删了。
+- 退出游戏时把任务物品闪光还原成装插件前的值，下次登录再打开。这样删掉插件后闪光不会一直留着。
+
+## 2.0.0
+
+- The addon is back to what it started as: it only keeps the game's loot sparkle on quest items switched on.
+- Removed: the sparkles on ore veins, herbs, corpses with loot and quest objects, and their four checkboxes. They relied on Blizzard's soft targeting, which caused friendly spells cast without a target to land on someone nearby instead of you, left empty nameplates over dead mobs and showed interact icons above objects. For herb and ore sparkles, try [Lueur](https://www.curseforge.com/wow/addons/lueur).
+- On the first login after the update, the soft targeting settings the addon changed (**Enable Interact Key**, the interact icons on objects, the interact range and the soft target nameplate) go back to what you had before 1.2.0. If you changed one of them yourself in the meantime, yours stays.
+
 ## 1.3.1-zh1
 
 smallwhite 的 fork，2026-11-06，基于 1.3.1。
