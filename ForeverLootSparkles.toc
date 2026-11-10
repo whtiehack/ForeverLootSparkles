@@ -2,7 +2,7 @@
 ## Title: Forever Loot Sparkles
 ## Title-zhCN: 任务物品闪光
 ## Notes: Always shows the sparkle effect on lootable quest items. Switches the loot sparkle back on at login and whenever a graphics change resets it. Options under Options > AddOns.
-## Notes-zhCN: 能拾取的任务物品一直闪光。设置在 Esc → 选项 → 插件 里。
+## Notes-zhCN: 能拾取的任务物品一直闪光。矿、草药、尸体闪光默认关着，在 Esc → 选项 → 插件 里打开。
 ## Author: Ashtar Senior
 #@debug@
 ## Version: dev
@@ -17,3 +17,4 @@
 
 Locales.lua
 ForeverLootSparkles.lua
+SoftTarget.lua

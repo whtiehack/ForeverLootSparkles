@@ -1,6 +1,6 @@
 # Forever Loot Sparkles
 
-> 简体中文版，fork 自 [svengabr/ForeverLootSparkles](https://github.com/svengabr/ForeverLootSparkles)，给 [EasyForever](https://github.com/whtiehack) 用。改动见 CHANGELOG 里的 `-zh` 版本。打包：`./package-zh.sh v2.0.0-zh1`，压缩包在 `dist/`。
+> 简体中文版，fork 自 [svengabr/ForeverLootSparkles](https://github.com/svengabr/ForeverLootSparkles)，给 [EasyForever](https://github.com/whtiehack) 用。改动见 CHANGELOG 里的 `-zh` 版本。打包：`./package-zh.sh v2.0.0-zh2`，压缩包在 `dist/`。
 
 <img src="https://raw.githubusercontent.com/svengabr/ForeverLootSparkles/main/media/logo.png" alt="ForeverLootSparkles logo" width="128">
 

@@ -59,9 +59,19 @@ end
 -- Up to 1.3.x the addon also made herbs, ore, corpses and quest objects sparkle
 -- through Blizzard's soft targeting (SoftTarget.lua). That side broke self-cast
 -- (CurseForge issue #10), left empty nameplates on corpses (#12) and showed
--- interact icons (#7), so it was removed. Its cvars are put back here: the
--- original values were saved in db.savedCVars.
+-- interact icons (#7), so upstream removed it. The zh fork keeps it, every option
+-- off: switched off once for everyone coming from 1.3.x, and its cvars put back
+-- here while all options stay off. The original values were saved in db.savedCVars.
 local SOFT_TARGET_OPTIONS = { "sparkleOre", "sparkleHerbs", "sparkleQuest", "sparkleCorpseLoot" };
+
+local function SoftTargetOn()
+	for _, key in ipairs(SOFT_TARGET_OPTIONS) do
+		if db[key] then
+			return true;
+		end
+	end
+	return false;
+end
 
 -- Value the addon set. These are the player's own settings too, so they only go
 -- back while they still hold that value; a player who changed one keeps theirs.
@@ -78,7 +88,7 @@ local cleanupPending = false;
 -- Runs at login and again with the delayed pass, in case account-synced
 -- settings arrive late; the saved values are dropped after the second run.
 local function RestoreSoftTarget(final)
-	if not (db and db.savedCVars) then
+	if not (db and db.savedCVars) or SoftTargetOn() then
 		return;
 	end
 	if InCombatLockdown() then
@@ -151,6 +161,8 @@ local function RegisterOptions()
 	Settings.CreateCheckbox(category, setting,
 		L["Keeps the game's loot sparkle on, even after a graphics preset turns it off. Your outline mode is left as you set it. Switching this off takes effect after restarting the game."]);
 
+	ns.AddSoftTargetOptions(category, db);
+
 	Settings.RegisterAddOnCategory(category);
 end
 
@@ -166,8 +178,11 @@ frame:SetScript("OnEvent", function(self, event, arg1)
 			self:UnregisterEvent("ADDON_LOADED");
 			ForeverLootSparklesDB = ForeverLootSparklesDB or {};
 			db = ForeverLootSparklesDB;
-			for _, key in ipairs(SOFT_TARGET_OPTIONS) do
-				db[key] = nil;
+			if not db.softTargetOff then
+				db.softTargetOff = true;
+				for _, key in ipairs(SOFT_TARGET_OPTIONS) do
+					db[key] = nil;
+				end
 			end
 			RegisterOptions();
 			sparklesShown = IsEnabled();
